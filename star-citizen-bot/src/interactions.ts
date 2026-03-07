@@ -4,6 +4,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
+  GuildMember,
   TextChannel,
   ChannelType,
   Guild,
@@ -52,7 +53,8 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
   const contractorRoleId = process.env.CONTRACTOR_ROLE_ID;
   if (
     contractorRoleId &&
-    !(interaction.member as any).roles.cache.has(contractorRoleId)
+    interaction.member instanceof GuildMember &&
+    !interaction.member.roles.cache.has(contractorRoleId)
   ) {
     return interaction.reply({
       content: "You do not have the required role to accept contracts.",
@@ -128,7 +130,7 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
 
   // Update original message
   const originalMessage = interaction.message;
-  const embed = EmbedBuilder.from(originalMessage.embeds[0] as any)
+  const embed = EmbedBuilder.from(originalMessage.embeds[0])
     .setColor(0xffff00) // Yellow for accepted
     .setFooter({ text: `Accepted by @${interaction.user.tag}` });
 
@@ -138,7 +140,7 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
   const instructionsEmbed = new EmbedBuilder()
     .setTitle(`Contract #${contract.id} - Ongoing`)
     .setDescription(
-      `<@${contractorId}>, you have accepted this contract! \n\nPlease collect **${contract.quantity}x ${(contract as any).Material?.name}** and prepare to deliver it to **${(contract as any).Location?.name}**.\n\n**Next Step:** Once you have the items, post a screenshot of your inventory in this channel as proof, then click the "Submit Proof" button below.`,
+      `<@${contractorId}>, you have accepted this contract! \n\nPlease collect **${contract.quantity}x ${contract.Material?.name}** and prepare to deliver it to **${contract.Location?.name}**.\n\n**Next Step:** Once you have the items, post a screenshot of your inventory in this channel as proof, then click the "Submit Proof" button below.`,
     )
     .setColor(0x0099ff);
 
@@ -436,7 +438,7 @@ async function handlePaymentSent(interaction: ButtonInteraction) {
           contract.messageId,
         );
         if (originalMessage) {
-          const boardEmbed = EmbedBuilder.from(originalMessage.embeds[0] as any)
+          const boardEmbed = EmbedBuilder.from(originalMessage.embeds[0])
             .setColor(0x808080) // Gray for completed
             .setTitle(`✅ Contract #${contract.id} - COMPLETED`);
           await originalMessage.edit({ embeds: [boardEmbed.toJSON()] });

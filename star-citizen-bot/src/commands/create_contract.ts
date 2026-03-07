@@ -86,11 +86,19 @@ export default {
   async execute(interaction: ChatInputCommandInteraction) {
     const makerRoleId = process.env.CONTRACT_MAKER_ROLE_ID;
 
+    if (!makerRoleId) {
+      console.error(
+        "CONTRACT_MAKER_ROLE_ID is not set in environment variables.",
+      );
+      return interaction.reply({
+        content:
+          "Contract creation is currently disabled due to a configuration error.",
+        ephemeral: true,
+      });
+    }
+
     // Check if user has the role to make contracts
-    if (
-      makerRoleId &&
-      !(interaction.member as any).roles.cache.has(makerRoleId)
-    ) {
+    if (!(interaction.member as any).roles.cache.has(makerRoleId)) {
       return interaction.reply({
         content: "You do not have permission to create contracts.",
         ephemeral: true,

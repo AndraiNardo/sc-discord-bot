@@ -50,10 +50,16 @@ export async function handleButtonInteraction(interaction: ButtonInteraction) {
 
 async function handleAcceptContract(interaction: ButtonInteraction) {
   const contractorRoleId = process.env.CONTRACTOR_ROLE_ID;
-  if (
-    contractorRoleId &&
-    !(interaction.member as any).roles.cache.has(contractorRoleId)
-  ) {
+
+  if (!contractorRoleId) {
+    console.error("CONTRACTOR_ROLE_ID is not set in environment variables.");
+    return interaction.reply({
+      content: "Contract acceptance is currently disabled due to a configuration error.",
+      ephemeral: true,
+    });
+  }
+
+  if (!(interaction.member as any).roles.cache.has(contractorRoleId)) {
     return interaction.reply({
       content: "You do not have the required role to accept contracts.",
       ephemeral: true,

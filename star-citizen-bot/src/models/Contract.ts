@@ -21,6 +21,10 @@ export class Contract extends Model {
     | "COMPLETED";
   public channelId!: string | null;
   public messageId!: string | null;
+
+  public readonly Material?: Material;
+  public readonly Location?: Location;
+
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }

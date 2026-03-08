@@ -112,7 +112,6 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
       allow: [
         PermissionsBitField.Flags.ViewChannel,
         PermissionsBitField.Flags.SendMessages,
-        PermissionsBitField.Flags.ManageChannels,
         PermissionsBitField.Flags.EmbedLinks,
       ],
     },

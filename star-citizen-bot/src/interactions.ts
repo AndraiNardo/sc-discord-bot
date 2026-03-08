@@ -62,7 +62,7 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
     });
   }
 
-  const contractId = parseInt(interaction.customId.split("_")[2] as string);
+  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
   const contract = await Contract.findByPk(contractId, {
     include: [Material, Location],
   });
@@ -162,7 +162,7 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
 }
 
 async function handleSubmitProof(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string);
+  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
   const contract = await Contract.findByPk(contractId);
 
   if (!contract)
@@ -236,7 +236,7 @@ async function handleProofDecision(
   interaction: ButtonInteraction,
   isCorrect: boolean,
 ) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string);
+  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
   const contract = await Contract.findByPk(contractId);
 
   if (!contract)
@@ -324,7 +324,7 @@ async function handleProofDecision(
 }
 
 async function handleDeliveryCompleted(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string);
+  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
   const contract = await Contract.findByPk(contractId);
 
   if (!contract)
@@ -386,7 +386,7 @@ async function handleDeliveryCompleted(interaction: ButtonInteraction) {
 }
 
 async function handlePaymentSent(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string);
+  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
   const contract = await Contract.findByPk(contractId);
 
   if (!contract)

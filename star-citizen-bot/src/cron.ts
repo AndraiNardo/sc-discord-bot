@@ -26,6 +26,21 @@ export function setupCronJobs(client: Client) {
         console.log(
           `Found ${expiredContracts.length} expired contracts. Relisting...`,
         );
+
+        // Extend deadline by 24 hours for simplicity
+        const newDeadline = new Date(now);
+        newDeadline.setHours(newDeadline.getHours() + 24);
+
+        // Bulk update deadlines
+        await Contract.update(
+          { deadline: newDeadline },
+          {
+            where: {
+              id: { [Op.in]: expiredContracts.map((c) => c.id) },
+            },
+          },
+        );
+
         const contractsChannelId = process.env.CONTRACTS_CHANNEL_ID;
 
         let channel: BaseGuildTextChannel | undefined;
@@ -36,10 +51,8 @@ export function setupCronJobs(client: Client) {
         }
 
         for (const contract of expiredContracts) {
-          // Extend deadline by 24 hours for simplicity
-          const newDeadline = new Date(now);
-          newDeadline.setHours(newDeadline.getHours() + 24);
-          await contract.update({ deadline: newDeadline });
+          // Update in-memory object to keep it in sync with the database
+          contract.deadline = newDeadline;
 
           if (channel && contract.messageId) {
             try {
@@ -93,6 +106,8 @@ export function setupCronJobs(client: Client) {
 
       console.log(`Found ${oldContracts.length} old contracts to clean up.`);
 
+      const contractsWithDeletedChannels: number[] = [];
+
       for (const contract of oldContracts) {
         if (contract.channelId) {
           try {
@@ -115,9 +130,24 @@ export function setupCronJobs(client: Client) {
               err,
             );
           }
-          // Nullify channelId to prevent re-attempts
-          await contract.update({ channelId: null });
+          // Collect IDs to nullify channelId in bulk later
+          contractsWithDeletedChannels.push(contract.id);
+
+          // Update in-memory object to keep it in sync with the database
+          contract.channelId = null;
         }
+      }
+
+      if (contractsWithDeletedChannels.length > 0) {
+        // Nullify channelId to prevent re-attempts
+        await Contract.update(
+          { channelId: null },
+          {
+            where: {
+              id: { [Op.in]: contractsWithDeletedChannels },
+            },
+          },
+        );
       }
     } catch (error) {
       console.error("Error running cleanup cron job:", error);

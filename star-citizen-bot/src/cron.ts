@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import { Contract } from "./models/Contract.js";
 import { Client, BaseGuildTextChannel, EmbedBuilder } from "discord.js";
 import dotenv from "dotenv";
+import { isValidConfigValue } from "./utils/config.js";
 
 dotenv.config();
 
@@ -28,10 +29,7 @@ export function setupCronJobs(client: Client) {
         const contractsChannelId = process.env.CONTRACTS_CHANNEL_ID;
 
         let channel: BaseGuildTextChannel | undefined;
-        if (
-          contractsChannelId &&
-          contractsChannelId !== "your_contracts_board_channel_id_here"
-        ) {
+        if (isValidConfigValue(contractsChannelId)) {
           channel = client.channels.cache.get(
             contractsChannelId,
           ) as BaseGuildTextChannel;

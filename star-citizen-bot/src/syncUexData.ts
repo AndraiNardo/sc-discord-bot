@@ -4,6 +4,7 @@ import sequelize from "./database.js";
 import { Material } from "./models/Material.js";
 import { Location } from "./models/Location.js";
 import { fileURLToPath } from "url";
+import { isValidConfigValue } from "./utils/config.js";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const UEXCORP_API_KEY = process.env.UEXCORP_API_KEY;
 const UEXCORP_API_BASE = "https://api.uexcorp.space/2.0";
 
 export async function syncUexData() {
-  if (!UEXCORP_API_KEY || UEXCORP_API_KEY === "your_uexcorp_api_key_here") {
+  if (!isValidConfigValue(UEXCORP_API_KEY)) {
     console.warn(
       "UEXCORP_API_KEY not found in environment variables. Mocking data instead.",
     );

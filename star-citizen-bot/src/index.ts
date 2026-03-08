@@ -11,6 +11,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { setupCronJobs } from "./cron.js";
+import { isValidConfigValue } from "./utils/config.js";
 
 dotenv.config();
 
@@ -106,7 +107,7 @@ for (const file of commandFiles) {
 setupCronJobs(client);
 
 const token = process.env.DISCORD_TOKEN;
-if (token && token !== "your_bot_token_here") {
+if (isValidConfigValue(token)) {
   client.login(token);
 } else {
   console.warn("DISCORD_TOKEN not set or is default. Bot will not connect.");

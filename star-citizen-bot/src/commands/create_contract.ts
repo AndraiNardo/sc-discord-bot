@@ -12,6 +12,7 @@ import { Op } from "sequelize";
 import { Material } from "../models/Material.js";
 import { Location } from "../models/Location.js";
 import { Contract } from "../models/Contract.js";
+import { isValidConfigValue } from "../utils/config.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -146,10 +147,7 @@ export default {
       });
 
       const contractsChannelId = process.env.CONTRACTS_CHANNEL_ID;
-      if (
-        !contractsChannelId ||
-        contractsChannelId === "your_contracts_board_channel_id_here"
-      ) {
+      if (!isValidConfigValue(contractsChannelId)) {
         return interaction.editReply(
           "Contract created in database, but no CONTRACTS_CHANNEL_ID set in .env to post it.",
         );

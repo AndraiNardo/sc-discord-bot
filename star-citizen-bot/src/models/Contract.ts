@@ -10,6 +10,7 @@ export class Contract extends Model {
   public materialId!: string;
   public locationId!: string;
   public quantity!: number;
+  public quality!: number;
   public reward!: number;
   public deadline!: Date;
   public status!:
@@ -55,6 +56,11 @@ Contract.init(
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    quality: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 500,
     },
     reward: {
       type: DataTypes.FLOAT,

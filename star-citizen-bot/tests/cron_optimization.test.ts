@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { setupCronJobs } from '../src/cron.ts';
-import { Contract } from '../src/models/Contract.ts';
+import { setupCronJobs } from '../src/cron.js';
+import { Contract } from '../src/models/Contract.js';
 import cron from 'node-cron';
 
 // Mock node-cron

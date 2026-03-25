@@ -1,11 +1,10 @@
 # Star Citizen Bot
 
-This repository contains a Discord bot built with TypeScript and discord.js for managing in-game contracts for materials (minerals, minables, etc.) in Star Citizen. It allows authorized users to create contracts that other players can accept, complete, or cancel. The bot uses a PostgreSQL database via Sequelize to store data and synchronizes commodity and destination data from the UEXCorp 2.0 API.
+This repository contains a Discord bot built with TypeScript and discord.js for managing in-game contracts for materials (minerals, minables, etc.) in Star Citizen. It allows authorized users to create contracts that other players can accept, complete, or cancel. The bot uses a SQLite database via Sequelize to store data locally and synchronizes commodity and destination data from the UEXCorp 2.0 API.
 
 ## Prerequisites
 
 - Node.js (v18 or higher recommended)
-- PostgreSQL database
 - A Discord Bot Token
 - (Optional) UEXCorp API key (for data synchronization)
 
@@ -30,8 +29,8 @@ This repository contains a Discord bot built with TypeScript and discord.js for 
     CONTRACT_MAKER_ROLE_ID=your_role_id_for_contract_makers
     CONTRACTS_CHANNEL_ID=your_channel_id_for_posting_contracts
 
-    # Database Configuration
-    DATABASE_URL=postgres://user:password@localhost:5432/your_database_name
+    # Database Configuration (Optional)
+    DATABASE_STORAGE=database.sqlite
 
     # API Keys
     UEX_API_KEY=your_uex_api_key_here # Optional, for syncing data
@@ -39,7 +38,7 @@ This repository contains a Discord bot built with TypeScript and discord.js for 
     *Note: The bot uses a utility (`isValidConfigValue`) to check if variables like `DISCORD_TOKEN` are set and not using placeholder values like `your_..._here`.*
 
 4.  **Initialize the Database:**
-    The bot needs to create the necessary tables in your PostgreSQL database. Run the initialization script:
+    The bot needs to create the necessary tables in the local SQLite database. Run the initialization script:
     ```bash
     npx tsx src/initDb.ts
     ```

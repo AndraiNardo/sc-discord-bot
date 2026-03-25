@@ -7,7 +7,7 @@ This document contains information relevant to developers contributing to the St
 *   **Runtime:** Node.js (v18+ recommended)
 *   **Language:** TypeScript
 *   **Discord Library:** `discord.js` (v14)
-*   **Database:** PostgreSQL (`pg`)
+*   **Database:** SQLite (`sqlite3`)
 *   **ORM:** Sequelize
 *   **Scheduling:** `node-cron`
 *   **HTTP Client:** `axios`
@@ -57,10 +57,10 @@ Or run all tests:
 npx tsx --test tests/*.test.ts
 ```
 
-Ensure required environment variables like `DATABASE_URL` are set when running tests.
+Ensure required environment variables like `DATABASE_STORAGE` are set when running tests.
 
 ```bash
-DATABASE_URL=postgres://user:pass@localhost:5432/dbname npx tsx --test tests/*.test.ts
+DATABASE_STORAGE=test_database.sqlite npx tsx --test tests/*.test.ts
 ```
 
 ### Mocking in Tests

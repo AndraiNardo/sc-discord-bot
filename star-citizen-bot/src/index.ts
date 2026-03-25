@@ -4,7 +4,9 @@ import {
   Collection,
   REST,
   Routes,
+  SlashCommandBuilder,
 } from "discord.js";
+import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";
 import sequelize from "./database.js";
 import fs from "fs";
@@ -18,11 +20,17 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export interface Command {
+  data: SlashCommandBuilder | any;
+  execute: (interaction: Interaction) => Promise<any>;
+  autocomplete?: (interaction: Interaction) => Promise<any>;
+}
+
 // Define extended client to hold commands
 export class CustomClient extends Client {
-  commands: Collection<string, any>;
+  commands: Collection<string, Command>;
 
-  constructor(options: any) {
+  constructor(options: ClientOptions) {
     super(options);
     this.commands = new Collection();
   }
@@ -43,7 +51,7 @@ client.once("ready", async () => {
   }
 });
 
-client.on("interactionCreate", async (interaction: any) => {
+client.on("interactionCreate", async (interaction: Interaction) => {
   if (interaction.isChatInputCommand()) {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;

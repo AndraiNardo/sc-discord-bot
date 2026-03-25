@@ -1,6 +1,6 @@
 # Database Schema
 
-The bot uses PostgreSQL and Sequelize ORM to manage its data. There are three primary tables: `Contracts`, `Materials`, and `Locations`.
+The bot uses a local SQLite database and Sequelize ORM to manage its data. There are three primary tables: `Contracts`, `Materials`, and `Locations`.
 
 ## Contracts Table (`contracts`)
 

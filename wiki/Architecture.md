@@ -11,9 +11,9 @@ The bot is structured into several key areas:
     *   **Interactions (`src/interactions.ts`):** Handles button clicks on contract embeds, progressing the contract through its various states.
     *   **Event Handling (`src/index.ts`):** Listens for events like `ready` and `interactionCreate` to route actions.
 
-2.  **Data Layer (Sequelize & PostgreSQL):**
+2.  **Data Layer (Sequelize & SQLite):**
     *   **Models (`src/models/`):** Defines the schema for `Contract`, `Location`, and `Material`. Uses TypeScript decorators/classes for strong typing.
-    *   **Connection (`src/database.ts`):** Establishes the connection to the PostgreSQL database using the `DATABASE_URL` environment variable.
+    *   **Connection (`src/database.ts`):** Establishes the connection to the local SQLite database using the `DATABASE_STORAGE` environment variable (defaults to `database.sqlite`).
 
 3.  **Synchronization Layer (UEXCorp API):**
     *   **Data Fetching (`src/syncUexData.ts`):** Periodically polls the UEXCorp API to update the `Material` and `Location` tables. Includes a fallback mechanism (`mockData`) if the API is unavailable.

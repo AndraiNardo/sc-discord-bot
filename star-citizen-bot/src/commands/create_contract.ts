@@ -39,6 +39,13 @@ export default {
         .setRequired(true)
         .setMinValue(1),
     )
+    .addIntegerOption((option) =>
+      option
+        .setName("quality")
+        .setDescription("The quality of the material (default: 500)")
+        .setRequired(false)
+        .setMinValue(1),
+    )
     .addNumberOption((option) =>
       option
         .setName("reward")
@@ -109,6 +116,7 @@ export default {
     const materialId = interaction.options.getString("material", true);
     const locationId = interaction.options.getString("location", true);
     const quantity = interaction.options.getInteger("quantity", true);
+    const quality = interaction.options.getInteger("quality") ?? 500;
     const reward = interaction.options.getNumber("reward", true);
     const deadlineHours = interaction.options.getInteger(
       "deadline_hours",
@@ -141,6 +149,7 @@ export default {
         materialId: material.id,
         locationId: location.id,
         quantity: quantity,
+        quality: quality,
         reward: reward,
         deadline: deadline,
         status: "OPEN",
@@ -165,6 +174,7 @@ export default {
         .setColor(0x00ff00)
         .addFields(
           { name: "Material", value: material.name, inline: true },
+          { name: "Quality", value: quality.toString(), inline: true },
           { name: "Quantity", value: quantity.toString(), inline: true },
           {
             name: "Reward",
@@ -198,9 +208,12 @@ export default {
       // Update contract with the message ID
       await contract.update({ messageId: message.id });
 
-      await interaction.editReply(
-        `Contract #${contract.id} created successfully and posted in <#${contractsChannelId}>.`,
-      );
+      let replyMessage = `Contract #${contract.id} created successfully and posted in <#${contractsChannelId}>.`;
+      if (quality < 500) {
+        replyMessage += "\n\n**Warning:** Materials with a quality below 500 are considered poor quality and should generally not be used in crafting.";
+      }
+
+      await interaction.editReply(replyMessage);
     } catch (error) {
       console.error(error);
       if (interaction.deferred) {

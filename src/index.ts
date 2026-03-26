@@ -7,7 +7,6 @@ import {
   SlashCommandBuilder,
   OAuth2Scopes,
   PermissionFlagsBits,
-  Events,
 } from "discord.js";
 import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";

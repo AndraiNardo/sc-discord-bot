@@ -5,6 +5,8 @@ import {
   REST,
   Routes,
   SlashCommandBuilder,
+  OAuth2Scopes,
+  PermissionFlagsBits,
 } from "discord.js";
 import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";
@@ -46,6 +48,14 @@ client.once("ready", async () => {
   try {
     await sequelize.authenticate();
     console.log("Database connected.");
+
+    if (client.user) {
+      const inviteLink = client.generateInvite({
+        scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+        permissions: [PermissionFlagsBits.Administrator],
+      });
+      console.log(`Invite link: ${inviteLink}`);
+    }
   } catch (error) {
     console.error("Database connection failed:", error);
   }

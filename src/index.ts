@@ -5,6 +5,9 @@ import {
   REST,
   Routes,
   SlashCommandBuilder,
+  OAuth2Scopes,
+  PermissionFlagsBits,
+  Events,
 } from "discord.js";
 import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";
@@ -40,18 +43,26 @@ const client = new CustomClient({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-client.once("ready", async () => {
+client.once(Events.ClientReady, async () => {
   console.log(`Logged in as ${client.user?.tag}!`);
 
   try {
     await sequelize.authenticate();
     console.log("Database connected.");
+
+    if (client.user) {
+      const inviteLink = client.generateInvite({
+        scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+        permissions: [PermissionFlagsBits.Administrator],
+      });
+      console.log(`Invite link: ${inviteLink}`);
+    }
   } catch (error) {
     console.error("Database connection failed:", error);
   }
 });
 
-client.on("interactionCreate", async (interaction: Interaction) => {
+client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   if (interaction.isChatInputCommand()) {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;

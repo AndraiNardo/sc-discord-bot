@@ -13,6 +13,7 @@ import { Material } from "../models/Material.js";
 import { Location } from "../models/Location.js";
 import { Contract } from "../models/Contract.js";
 import { isValidConfigValue } from "../utils/config.js";
+import { logError } from "../utils/logger.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -88,7 +89,7 @@ export default {
     const makerRoleId = process.env.CONTRACT_MAKER_ROLE_ID;
 
     if (!makerRoleId) {
-      console.error(
+      logError(
         "CONTRACT_MAKER_ROLE_ID is not set in environment variables.",
       );
       return interaction.reply({
@@ -202,7 +203,7 @@ export default {
         `Contract #${contract.id} created successfully and posted in <#${contractsChannelId}>.`,
       );
     } catch (error) {
-      console.error(error);
+      logError("Error while creating contract", error);
       if (interaction.deferred) {
         await interaction.editReply(
           "An error occurred while creating the contract.",

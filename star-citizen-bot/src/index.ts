@@ -12,6 +12,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { setupCronJobs } from "./cron.js";
 import { isValidConfigValue } from "./utils/config.js";
+import { logError } from "./utils/logger.js";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ client.once("ready", async () => {
     await sequelize.authenticate();
     console.log("Database connected.");
   } catch (error) {
-    console.error("Database connection failed:", error);
+    logError("Database connection failed", error);
   }
 });
 
@@ -51,7 +52,7 @@ client.on("interactionCreate", async (interaction: any) => {
     try {
       await command.execute(interaction);
     } catch (error) {
-      console.error(error);
+      logError(`Error executing command ${interaction.commandName}`, error);
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: "There was an error while executing this command!",
@@ -73,12 +74,12 @@ client.on("interactionCreate", async (interaction: any) => {
         await command.autocomplete(interaction);
       }
     } catch (error) {
-      console.error(error);
+      logError(`Error in autocomplete for command ${interaction.commandName}`, error);
     }
   } else if (interaction.isButton()) {
     import("./interactions.js")
       .then((module) => module.handleButtonInteraction(interaction))
-      .catch(console.error);
+      .catch((err) => logError("Error handling button interaction", err));
   }
 });
 
@@ -101,7 +102,7 @@ for (const file of commandFiles) {
         );
       }
     })
-    .catch(console.error);
+    .catch((err) => logError(`Error loading command from ${filePath}`, err));
 }
 
 setupCronJobs(client);

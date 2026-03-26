@@ -15,6 +15,7 @@ import type { OverwriteData } from "discord.js";
 import { Contract } from "./models/Contract.js";
 import { Material } from "./models/Material.js";
 import { Location } from "./models/Location.js";
+import { logError } from "./utils/logger.js";
 
 export async function handleButtonInteraction(interaction: ButtonInteraction) {
   const customId = interaction.customId;
@@ -34,7 +35,7 @@ export async function handleButtonInteraction(interaction: ButtonInteraction) {
       await handlePaymentSent(interaction);
     }
   } catch (error) {
-    console.error("Error handling button interaction:", error);
+    logError("Error handling button interaction", error);
     if (interaction.deferred || interaction.replied) {
       await interaction.followUp({
         content: "An error occurred while processing this action.",

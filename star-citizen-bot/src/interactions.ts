@@ -49,6 +49,47 @@ export async function handleButtonInteraction(interaction: ButtonInteraction) {
   }
 }
 
+/**
+ * Helper function to retrieve a contract from a button interaction and handle errors.
+ *
+ * @param interaction The button interaction.
+ * @param includeAssociations Whether to include Material and Location associations.
+ * @returns The contract if found, or null if an error occurred (and a reply was sent).
+ */
+async function getContractFromInteraction(
+  interaction: ButtonInteraction,
+  includeAssociations = false,
+): Promise<Contract | null> {
+  const parts = interaction.customId.split("_");
+  const contractIdStr = parts[parts.length - 1];
+  const contractId = parseInt(contractIdStr as string, 10);
+
+  if (isNaN(contractId)) {
+    await interaction.reply({
+      content: "Invalid contract ID.",
+      ephemeral: true,
+    });
+    return null;
+  }
+
+  const options: any = {};
+  if (includeAssociations) {
+    options.include = [Material, Location];
+  }
+
+  const contract = await Contract.findByPk(contractId, options);
+
+  if (!contract) {
+    await interaction.reply({
+      content: "Contract not found.",
+      ephemeral: true,
+    });
+    return null;
+  }
+
+  return contract;
+}
+
 async function handleAcceptContract(interaction: ButtonInteraction) {
   const contractorRoleId = process.env.CONTRACTOR_ROLE_ID;
   if (
@@ -62,16 +103,9 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
     });
   }
 
-  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
-  const contract = await Contract.findByPk(contractId, {
-    include: [Material, Location],
-  });
+  const contract = await getContractFromInteraction(interaction, true);
+  if (!contract) return;
 
-  if (!contract)
-    return interaction.reply({
-      content: "Contract not found.",
-      ephemeral: true,
-    });
   if (contract.status !== "OPEN")
     return interaction.reply({
       content: "This contract is no longer open.",
@@ -161,14 +195,9 @@ async function handleAcceptContract(interaction: ButtonInteraction) {
 }
 
 async function handleSubmitProof(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
-  const contract = await Contract.findByPk(contractId);
+  const contract = await getContractFromInteraction(interaction);
+  if (!contract) return;
 
-  if (!contract)
-    return interaction.reply({
-      content: "Contract not found.",
-      ephemeral: true,
-    });
   if (interaction.user.id !== contract.contractorId)
     return interaction.reply({
       content: "Only the contractor can submit proof.",
@@ -235,14 +264,9 @@ async function handleProofDecision(
   interaction: ButtonInteraction,
   isCorrect: boolean,
 ) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
-  const contract = await Contract.findByPk(contractId);
+  const contract = await getContractFromInteraction(interaction);
+  if (!contract) return;
 
-  if (!contract)
-    return interaction.reply({
-      content: "Contract not found.",
-      ephemeral: true,
-    });
   if (interaction.user.id !== contract.creatorId)
     return interaction.reply({
       content: "Only the creator can verify proof.",
@@ -323,14 +347,9 @@ async function handleProofDecision(
 }
 
 async function handleDeliveryCompleted(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
-  const contract = await Contract.findByPk(contractId);
+  const contract = await getContractFromInteraction(interaction);
+  if (!contract) return;
 
-  if (!contract)
-    return interaction.reply({
-      content: "Contract not found.",
-      ephemeral: true,
-    });
   // Allow either party to click it
   if (
     interaction.user.id !== contract.contractorId &&
@@ -385,14 +404,9 @@ async function handleDeliveryCompleted(interaction: ButtonInteraction) {
 }
 
 async function handlePaymentSent(interaction: ButtonInteraction) {
-  const contractId = parseInt(interaction.customId.split("_")[2] as string, 10);
-  const contract = await Contract.findByPk(contractId);
+  const contract = await getContractFromInteraction(interaction);
+  if (!contract) return;
 
-  if (!contract)
-    return interaction.reply({
-      content: "Contract not found.",
-      ephemeral: true,
-    });
   if (interaction.user.id !== contract.creatorId)
     return interaction.reply({
       content: "Only the creator can confirm payment.",

@@ -52,7 +52,7 @@ This repository contains a Discord bot built with TypeScript and discord.js for 
         Compile the TypeScript code and run the generated JavaScript:
         ```bash
         npx tsc
-        node dist/index.js
+        node src/index.js
         ```
 
 ## Features Overview

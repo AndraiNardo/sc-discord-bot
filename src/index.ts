@@ -5,6 +5,9 @@ import {
   REST,
   Routes,
   SlashCommandBuilder,
+  OAuth2Scopes,
+  PermissionFlagsBits,
+  Events,
 } from "discord.js";
 import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";
@@ -40,7 +43,7 @@ const client = new CustomClient({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-client.once("ready", async () => {
+client.once(Events.ClientReady, async () => {
   console.log(`Logged in as ${client.user?.tag}!`);
 
   try {
@@ -56,7 +59,7 @@ client.once("ready", async () => {
   }
 });
 
-client.on("interactionCreate", async (interaction: Interaction) => {
+client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   if (interaction.isChatInputCommand()) {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;

@@ -5,8 +5,6 @@ import {
   REST,
   Routes,
   SlashCommandBuilder,
-  OAuth2Scopes,
-  PermissionFlagsBits,
 } from "discord.js";
 import type { Interaction, ClientOptions } from "discord.js";
 import dotenv from "dotenv";
@@ -50,10 +48,7 @@ client.once("ready", async () => {
     console.log("Database connected.");
 
     if (client.user) {
-      const inviteLink = client.generateInvite({
-        scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-        permissions: [PermissionFlagsBits.Administrator],
-      });
+      const inviteLink = `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`;
       console.log(`Invite link: ${inviteLink}`);
     }
   } catch (error) {

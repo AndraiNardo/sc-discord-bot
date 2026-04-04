@@ -48,7 +48,10 @@ const token = process.env.DISCORD_TOKEN;
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
   .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
+  .filter(
+    (file) =>
+      (file.endsWith(".ts") || file.endsWith(".js")) && !file.endsWith(".d.ts"),
+  );
 
 const commandsData: any[] = [];
 

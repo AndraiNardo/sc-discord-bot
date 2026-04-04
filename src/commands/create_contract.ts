@@ -39,13 +39,6 @@ export default {
         .setRequired(true)
         .setMinValue(1),
     )
-    .addIntegerOption((option) =>
-      option
-        .setName("quality")
-        .setDescription("The quality of the material (default: 500)")
-        .setRequired(false)
-        .setMinValue(1),
-    )
     .addNumberOption((option) =>
       option
         .setName("reward")
@@ -61,6 +54,13 @@ export default {
           .setRequired(true)
           .setMinValue(1)
           .setMaxValue(720), // max 30 days
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName("quality")
+        .setDescription("The quality of the material (default: 500)")
+        .setRequired(false)
+        .setMinValue(1),
     ),
 
   async autocomplete(interaction: AutocompleteInteraction) {

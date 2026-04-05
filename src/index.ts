@@ -53,8 +53,6 @@ const commandFiles = fs
       (file.endsWith(".ts") || file.endsWith(".js")) && !file.endsWith(".d.ts"),
   );
 
-const commandsData: any[] = [];
-
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const commandUrl = `file://${filePath}`;
@@ -63,7 +61,6 @@ for (const file of commandFiles) {
     const command = module.default;
     if ("data" in command && "execute" in command) {
       client.commands.set(command.data.name, command);
-      commandsData.push(command.data.toJSON());
     } else {
       console.log(
         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
@@ -73,6 +70,8 @@ for (const file of commandFiles) {
     console.error(`Failed to load command at ${filePath}:`, error);
   }
 }
+
+const commandsData = client.commands.map(command => command.data.toJSON());
 
 
 client.once(Events.ClientReady, async () => {
